@@ -38,6 +38,11 @@ def configure_parser(sub_parsers):
                    help=('Do not update the wheel filename tags and WHEEL info'
                          ' to match the repaired platform tag.'),
                    default=True)
+    p.add_argument('-g','--graft-whitelist',
+                   action='append',
+                   dest='GRAFT_WHITELIST',
+                   help=('If supplied, only graft supplied libraries'),
+                   default=[None])
     p.set_defaults(func=execute)
 
 
@@ -78,7 +83,8 @@ def execute(args, p):
                              abi=args.PLAT,
                              lib_sdir=args.LIB_SDIR,
                              out_dir=args.WHEEL_DIR,
-                             update_tags=args.UPDATE_TAGS)
+                             update_tags=args.UPDATE_TAGS,
+                             graft_whitelist=args.GRAFT_WHITELIST)
 
     if out_wheel is not None:
         print('\nFixed-up wheel written to %s' % out_wheel)

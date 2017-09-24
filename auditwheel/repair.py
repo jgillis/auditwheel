@@ -38,7 +38,7 @@ def verify_patchelf():
 
 
 def repair_wheel(wheel_path: str, abi: str, lib_sdir: str, out_dir: str,
-                 update_tags: bool) -> Optional[str]:
+                 update_tags: bool, graft_whitelist: [str]) -> Optional[str]:
 
     external_refs_by_fn = get_wheel_elfdata(wheel_path)[1]
     soname_map = {}  # type: Dict[str, str]
@@ -77,6 +77,12 @@ def repair_wheel(wheel_path: str, abi: str, lib_sdir: str, out_dir: str,
                                      soname)
 
                 if not soname in soname_map:
+                    if len(graft_whitelist)>1:
+                        graft = False
+                        for g in graft_whitelist:
+                            if g is not None and g in soname:
+                                graft = True
+                        if not graft: continue
                     new_soname, new_path = copylib(src_path, dest_dir)
                     soname_map[soname] = (new_soname, new_path)
                     check_call(['patchelf', '--replace-needed', soname, new_soname, fn])
@@ -149,7 +155,7 @@ def copylib(src_path, dest_dir):
 def patchelf_set_rpath(fn, libdir):
     new_rpath = pjoin('$ORIGIN', relpath(libdir, dirname(fn)))
     # Get current rpaths list of the library
-    current_rpaths = set(map(lambda rp: pjoin('$ORIGIN', relpath(rp, dirname(fn))), 
+    current_rpaths = set(map(lambda rp: pjoin('$ORIGIN', relpath(rp, dirname(fn))),
                          elf_read_rpaths(fn)['rpaths']))
     # Build a set of equivalent rpaths from the one to add
     new_rpath_set = set([new_rpath])
@@ -164,7 +170,7 @@ def patchelf_set_rpath(fn, libdir):
     if len(current_rpaths.intersection(new_rpath_set)) == 0:
         # Don't override previously set rpaths
         if current_rpaths:
-            rpaths = new_rpath + ':' + ':'.join(current_rpaths)	
+            rpaths = new_rpath + ':' + ':'.join(current_rpaths)
         else:
             rpaths = new_rpath
         print('Setting RPATH: %s to "%s"' % (fn, rpaths))
