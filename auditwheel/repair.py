@@ -76,10 +76,6 @@ def repair_wheel(wheel_path: str, abi: str, lib_sdir: str, out_dir: str,
             ext_libs = v[abi]['libs']  # type: Dict[str, str]
             for soname, src_path in ext_libs.items():
                 print("soname",soname,"src_path",src_path)
-                if src_path is None:
-                    raise ValueError(('Cannot repair wheel, because required '
-                                      'library "%s" could not be located') %
-                                     soname)
 
                 if not soname in soname_map:
                     if len(graft_whitelist)>1:
