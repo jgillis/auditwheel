@@ -47,7 +47,7 @@ def configure_parser(sub_parsers):
                    action='append',
                    dest='EXCLUDE_LIBS',
                    help=('List of libraries (matches) to exclude from the grafting process'),
-                   default=[None])
+                   default=[])
     p.set_defaults(func=execute)
 
 

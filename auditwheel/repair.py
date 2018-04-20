@@ -46,6 +46,7 @@ def repair_wheel(wheel_path: str, abi: str, lib_sdir: str, out_dir: str,
         out_dir = abspath(out_dir)
 
     wheel_fname = basename(wheel_path)
+    print("exclude_libs",exclude_libs)
 
     with InWheelCtx(wheel_path) as ctx:
         ctx.out_wheel = pjoin(out_dir, wheel_fname)
