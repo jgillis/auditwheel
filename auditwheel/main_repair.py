@@ -43,6 +43,11 @@ def configure_parser(sub_parsers):
                    dest='GRAFT_WHITELIST',
                    help=('If supplied, only graft supplied libraries'),
                    default=[None])
+    p.add_argument('-e','--exclude-libs',
+                   action='append',
+                   dest='EXCLUDE_LIBS',
+                   help=('List of libraries (matches) to exclude from the grafting process'),
+                   default=[None])
     p.set_defaults(func=execute)
 
 
@@ -84,7 +89,8 @@ def execute(args, p):
                              lib_sdir=args.LIB_SDIR,
                              out_dir=args.WHEEL_DIR,
                              update_tags=args.UPDATE_TAGS,
-                             graft_whitelist=args.GRAFT_WHITELIST)
+                             graft_whitelist=args.GRAFT_WHITELIST,
+                             exclude_libs=args.EXCLUDE_LIBS)
 
     if out_wheel is not None:
         print('\nFixed-up wheel written to %s' % out_wheel)

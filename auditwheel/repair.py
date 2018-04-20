@@ -38,7 +38,7 @@ def verify_patchelf():
 
 
 def repair_wheel(wheel_path: str, abi: str, lib_sdir: str, out_dir: str,
-                 update_tags: bool, graft_whitelist: [str]) -> Optional[str]:
+                 update_tags: bool, graft_whitelist: [str], exclude_libs: [str]) -> Optional[str]:
 
     external_refs_by_fn = get_wheel_elfdata(wheel_path)[1]
     soname_map = {}  # type: Dict[str, str]
@@ -69,8 +69,17 @@ def repair_wheel(wheel_path: str, abi: str, lib_sdir: str, out_dir: str,
             if not exists(dest_dir):
                 os.mkdir(dest_dir)
 
+            print("fn",fn)
+            if any([re.match(e,fn) for e in exclude_libs]) : continue
+
             ext_libs = v[abi]['libs']  # type: Dict[str, str]
             for soname, src_path in ext_libs.items():
+                print("soname",soname,"src_path",src_path)
+                if src_path is None:
+                    raise ValueError(('Cannot repair wheel, because required '
+                                      'library "%s" could not be located') %
+                                     soname)
+
                 if not soname in soname_map:
                     if len(graft_whitelist)>1:
                         graft = False
