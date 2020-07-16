@@ -11,13 +11,24 @@ import hashlib
 import csv
 from itertools import product
 
-from wheel.util import urlsafe_b64encode, open_for_csv, native  # type: ignore
+from wheel.util import urlsafe_b64encode, native  # type: ignore
 from wheel.pkginfo import read_pkg_info, write_pkg_info  # type: ignore
 from wheel.install import WHEEL_INFO_RE  # type: ignore
 
 from .tmpdirs import InTemporaryDirectory
 from .tools import unique_by_index, zip2dir, dir2zip
 
+import sys
+
+
+def open_for_csv(name, mode):
+    if sys.version_info[0] < 3:
+        kwargs = {}
+        mode += 'b'
+    else:
+        kwargs = {'newline': '', 'encoding': 'utf-8'}
+
+    return open(name, mode, **kwargs)
 
 class WheelToolsError(Exception):
     pass
