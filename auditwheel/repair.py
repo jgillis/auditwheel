@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 # Copied from wheel 0.31.1
 WHEEL_INFO_RE = re.compile(
-    r"""^(?P<namever>(?P<name>.+?)-(?P<ver>\d.*?))(-(?P<build>\d.*?))?
+    r"""^(?P<namever>(?P<name>.+?)-(?P<ver>.*?))(-(?P<build>\d.*?))?
      -(?P<pyver>[a-z].+?)-(?P<abi>.+?)-(?P<plat>.+?)(\.whl|\.dist-info)$""",
     re.VERBOSE).match
 
