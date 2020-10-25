@@ -29,8 +29,12 @@ for _policy in {'manylinux2014'}:
 
 
 def get_arch_name():
-    machine = _platform_module.machine()
-    if machine not in {'x86_64', 'i686'}:
+    import os
+    if "ARCH" in os.environ:
+      machine = os.environ["ARCH"].split("-")[-1]
+    else:
+      machine = _platform_module.machine()
+    if machine not in {'x64', 'x86', 'x86_64', 'i686'}:
         return machine
     else:
         return {64: 'x86_64', 32: 'i686'}[bits]
